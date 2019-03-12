@@ -21,7 +21,7 @@ function InitWarps()
   if g_WarpsINI:ReadFile("warps.ini") then
     local num = g_WarpsINI:GetNumKeys() - 1
     for i=0, num do
-      local name = g_WarpsINI:GetKeyName(i)
+      local name = NormalizeWarpName(g_WarpsINI:GetKeyName(i))
       g_Warps[name] = {}
       g_Warps[name]["w"] = g_WarpsINI:GetValue(name, "w")
       g_Warps[name]["x"] = g_WarpsINI:GetValueI(name, "x")
@@ -31,23 +31,24 @@ function InitWarps()
   end
 end
 
-function ValidUsage(Split, Player, Num)
+function GetWarpName(Split, Player, Num)
   Num = Num or 3
   if #Split ~= Num then
     Player:SendMessageInfo("Usage: " .. table.concat(Split, " ", 1, Num-1) .." <name>")
-    return false
+    return nil
   end
-  return true
+  return Split[Num]
 end
 
 function UseWarp(Split, Player)
-  if not ValidUsage(Split, Player) then
+  local disp_name = GetWarpName(Split, Player)
+  if disp_name == nil then
     return true
   end
 
-  local name = Split[3]
+  local name = NormalizeWarpName(disp_name)
   if g_Warps[name] == nil then
-    Player:SendMessageFailure("No warp point called \"" .. name .. "\" exists")
+    Player:SendMessageFailure("No warp point called \"" .. disp_name .. "\" exists")
     return true;
   end
 
@@ -62,7 +63,7 @@ function UseWarp(Split, Player)
     Player:TeleportToCoords(x + 0.5, y, z + 0.5)
   end
   Player:SetGameMode(Player:GetWorld():GetGameMode())
-  Player:SendMessageSuccess("Warped to warp point \"" .. name .. "\"")
+  Player:SendMessageSuccess("Warped to \"" .. disp_name .. "\"")
   return true
 end
 
@@ -80,13 +81,14 @@ function ListWarps(Split, Player)
 end
 
 function SetWarp(Split, Player)
-  if not ValidUsage(Split, Player) then
+  local disp_name = GetWarpName(Split, Player)
+  if disp_name == nil then
     return true
   end
 
-  local name = Split[3]
+  local name = NormalizeWarpName(disp_name)
   if g_Warps[name] ~= nil then
-    Player:SendMessageFailure("Warp point \"" .. name .. "\" already exists")
+    Player:SendMessageFailure("Warp point \"" .. disp_name .. "\" already exists")
     return true
   end
 
@@ -106,18 +108,19 @@ function SetWarp(Split, Player)
   g_WarpsINI:SetValue(name , "y" , y)
   g_WarpsINI:SetValue(name , "z" , z)
   g_WarpsINI:WriteFile("warps.ini");
-  Player:SendMessageSuccess("Warp point \"" .. name .. "\" set to your current location")
+  Player:SendMessageSuccess("Warp point \"" .. disp_name .. "\" set at your current location")
   return true
 end
 
 function RemoveWarp(Split, Player)
-  if not ValidUsage(Split, Player) then
+  local disp_name = GetWarpName(Split, Player)
+  if disp_name == nil then
     return true
   end
 
-  local name = Split[3]
+  local name = NormalizeWarpName(disp_name)
   if g_Warps[name] == nil then
-    Player:SendMessageFailure("No warp point called \"" .. name .. "\" exists")
+    Player:SendMessageFailure("No warp point called \"" .. disp_name .. "\" exists")
     return true;
   end
 
@@ -125,6 +128,17 @@ function RemoveWarp(Split, Player)
   g_WarpsINI:DeleteKey(name)
   g_WarpsINI:WriteFile("warps.ini")
 
-  Player:SendMessageSuccess("Warp point \"" .. name .. "\" was removed")
+  Player:SendMessageSuccess("Warp point \"" .. disp_name .. "\" was removed")
   return true
+end
+
+-- Strip all chat codes from a string
+function StripControlCodes(s)
+  return string.gsub(s, "§[0-9A-Fa-fK-Ok-oRr]", "")
+end
+
+--Normalize warp names
+--(remove control codes, lowercase, spaces to underscores)
+function NormalizeWarpName(s)
+  return string.gsub(StripControlCodes(s):lower(), " ", "_")
 end
