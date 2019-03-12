@@ -9,6 +9,8 @@ function Initialize(Plugin)
 
   dofile(cPluginManager:GetPluginsPath() .. "/InfoReg.lua")
   RegisterPluginInfoCommands()
+  cPluginManager:AddHook(cPluginManager.HOOK_UPDATING_SIGN, OnUpdatingSign)
+  cPluginManager.AddHook(cPluginManager.HOOK_PLAYER_RIGHT_CLICK, OnPlayerRightClick)
 
   InitWarps()
 
@@ -141,4 +143,28 @@ end
 --(remove control codes, lowercase, spaces to underscores)
 function NormalizeWarpName(s)
   return string.gsub(StripControlCodes(s):lower(), " ", "_")
+end
+
+function OnUpdatingSign(World, BlockX, BlockY, BlockZ, Line1, Line2, Line3, Line4, Player)
+  local l1 = StripControlCodes(Line1)
+  if l1 ~= "[Warp]" then
+    return false
+  end
+
+  return false,
+    cChatColor.Purple .. cChatColor.Bold .. l1,
+    StripControlCodes(Line2),
+    Line3,
+    cChatColor.Gray .. cChatColor.Bold .. "(right click)"
+end
+
+function OnPlayerRightClick(Player, BlockX, BlockY, BlockZ, BlockFace, CursorX, CursorY, CursorZ)
+  if not Player:HasPermission("simplewarps.use") then
+    return false
+  end
+  local valid, l1, l2, l3, l4 = Player:GetWorld():GetSignLines(BlockX, BlockY, BlockZ)
+  if valid and StripControlCodes(l1) == "[Warp]" then
+    UseWarp({"/warp", "to", l2}, Player)
+    return true
+  end
 end

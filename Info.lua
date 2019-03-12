@@ -5,6 +5,12 @@ g_PluginInfo =
   Date = "2019-03-11",
   SourceLocation = "https://github.com/pR0Ps/cuberite-simplewarps",
   Description = "Manage and use named warp locations",
+  AdditionalInfo = {
+    {
+      Title = "Creating and using warp signs",
+      Contents =  "1) Create a sign\n2) Make the first line \"[Warp]\"\n3) Make the second line the name of a warp point.\n4) Optionally add other text to the 3rd line.\n5) Save.\n6) Right-click the sign to warp to the specified location."
+    },
+  },
   Commands = {
     ["/warp"] = {
       Subcommands = {
