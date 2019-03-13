@@ -33,6 +33,13 @@ function InitWarps()
   end
 end
 
+function WarpHelp(Split, Player)
+  Player:SendMessageInfo("See \"/help warp\" for warp-related commands")
+  Player:SendMessageInfo("To create a clickable warp, create a sign with the following format:\n[Warp]\n<warp name>\n<optional description>")
+  Player:SendMessageInfo("Warp point names will always be normalized to lowercase, underscore-separated names. This means a sign can use the warp point name \"My Warp Point\" to mean the warp point named \"my_warp_point\". The same thing will happen when creating warp points via commands.")
+  return true
+end
+
 function GetWarpName(Split, Player, Num)
   Num = Num or 3
   if #Split ~= Num then

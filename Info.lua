@@ -14,6 +14,11 @@ g_PluginInfo =
   Commands = {
     ["/warp"] = {
       Subcommands = {
+        help = {
+          HelpString = "Help on using warps",
+          Handler = WarpHelp,
+        },
+
         to = {
           HelpString = "Warp to a named warp point",
           Permission = "simplewarps.use",
