@@ -1,8 +1,8 @@
 g_PluginInfo =
 {
   Name = "SimpleWarps",
-  Version = "1",
-  Date = "2019-03-11",
+  Version = "2",
+  Date = "2019-03-13",
   SourceLocation = "https://github.com/pR0Ps/cuberite-simplewarps",
   Description = "Manage and use named warp locations",
   AdditionalInfo = {
