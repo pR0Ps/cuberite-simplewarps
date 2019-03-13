@@ -23,3 +23,9 @@ Signs can be used as interactive warp points by creating them with the format:
 After editing, the text on the sign will change to signify that the format was accepted. Any player
 with the `simplewarps.use` permission can then right click on the sign to be teleported to the named
 warp point (if it exists).
+
+### Example
+
+![Creating the sign](img/create.jpg)
+![The activated sign](img/warpsign.jpg)
+![After clicking the sign](img/warped.jpg)
